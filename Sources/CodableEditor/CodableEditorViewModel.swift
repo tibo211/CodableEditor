@@ -32,15 +32,13 @@ final class CodableEditorViewModel<Model: Codable> {
         }
     }
     
-    func save() {
+    func save() throws {
         let decoder = JSONDecoder()
         
         let data = source.data(using: .utf8) ?? Data()
 
-        handleErrors {
-            let model = try decoder.decode(Model.self, from: data)
-            saveCompletion(model)
-        }
+        let model = try decoder.decode(Model.self, from: data)
+        saveCompletion(model)
     }
     
     func handleErrors(block: () throws -> Void) {

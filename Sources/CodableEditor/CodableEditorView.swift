@@ -24,8 +24,10 @@ struct CodableEditorView<Model: Codable>: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("save", systemImage: "square.and.arrow.down") {
-                        viewModel.save()
-                        dismiss()
+                        viewModel.handleErrors {
+                            try viewModel.save()
+                            dismiss()
+                        }
                     }
                 }
                 
