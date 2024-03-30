@@ -8,11 +8,11 @@
 import SwiftUI
 import CodeEditor
 
-public struct CodableEditorView<Model: Codable>: View {
+struct CodableEditorView<Model: Codable>: View {
     @State var viewModel: CodableEditorViewModel<Model>
     @Environment(\.dismiss) var dismiss
     
-    public var body: some View {
+    var body: some View {
         NavigationStack {
             CodeEditor(
                 source: $viewModel.source,
@@ -57,11 +57,18 @@ extension CodeEditor.ThemeName {
     static let nord = CodeEditor.ThemeName(rawValue: "nord")
 }
 
-extension View {
+public extension View {
     @ViewBuilder
-    func editable<Model: Identifiable>(_ model: Binding<Model?>, save: @escaping (Model) -> Void) -> some View where Model: Codable {
+    /// Presents a modal that allows editing the JSON representation of a model.
+    /// - Parameters:
+    ///   - model: A binding to the model instance that will be edited.
+    ///   - saveAction: When the editing is completed, it returns the model decoded from the modified JSON.
+    func jsonSheetEditor<Model: Identifiable>(
+        _ model: Binding<Model?>,
+        saveAction: @escaping (Model) -> Void
+    ) -> some View where Model: Codable {
         sheet(item: model) { model in
-            let viewModel = CodableEditorViewModel(model: model, saveCompletion: save)
+            let viewModel = CodableEditorViewModel(model: model, saveCompletion: saveAction)
             CodableEditorView(viewModel: viewModel)
         }
     }
